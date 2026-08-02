@@ -15,6 +15,20 @@ test('랜딩 문서는 한국어 모바일 페이지로 공유할 수 있다', a
   assert.equal((html.match(/<h1\b/g) || []).length, 1);
 });
 
+test('체크리스트 미리보기는 방 선택 다음 이사 전 혜택 순서로 보여준다', async () => {
+  const html = await readProjectFile('index.html');
+  const roomSelection = html.match(
+    /<section class="preview__step"[\s\S]*?<ol class="preview__step-list">([\s\S]*?)<\/ol>/,
+  );
+
+  assert.ok(roomSelection);
+  assert.equal((roomSelection[1].match(/<li>/g) || []).length, 5);
+  assert.match(html, /<span>01<\/span>[\s\S]*방 선택/);
+  assert.match(html, /<span>02<\/span>[\s\S]*이사 전/);
+  assert.match(html, /내 지역 주거 혜택 확인/);
+  assert.ok(html.indexOf('방 선택') < html.indexOf('이사 전'));
+});
+
 test('전환 폼은 이메일, 두 동의, 허니팟과 상태 영역을 제공한다', async () => {
   const html = await readProjectFile('index.html');
 
