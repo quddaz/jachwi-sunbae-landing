@@ -2,6 +2,8 @@
 
 인스타그램 릴스·쇼츠 광고에서 유입된 사용자가 고시원 계약 전 체크리스트 25개와 지역별 주거 혜택 확인 방법을 이메일로 받을 수 있는 모바일 우선 랜딩 페이지입니다.
 
+배포 주소: [https://jachwi-sunbae-landing.vercel.app](https://jachwi-sunbae-landing.vercel.app)
+
 ## 구성
 
 - 정적 HTML·CSS·JavaScript 랜딩 페이지
