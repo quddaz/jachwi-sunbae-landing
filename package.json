@@ -1,0 +1,13 @@
+{
+  "name": "jachwi-sunbae-landing",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --test && node scripts/check-static.js"
+  }
+}
