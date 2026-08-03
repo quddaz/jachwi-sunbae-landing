@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#ff6038">
+    <meta name="theme-color" content="#030305">
     <meta name="description" content="사진에는 보이지 않는 고시원 점검 항목 25개와 지역별 주거 혜택 확인법을 무료로 받아보세요.">
     <meta property="og:type" content="website">
     <meta property="og:title" content="자취선배 | 고시원 계약 전 체크리스트">
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="/src/styles.css">
   </head>
   <body>
-    <header class="site-header">
+    <header class="site-header site-header--overlay">
       <a class="brand" href="#top" aria-label="자취선배 처음으로">
         <span class="brand__mark" aria-hidden="true">
           <svg viewBox="0 0 32 32" role="img">
@@ -28,44 +28,49 @@
     </header>
 
     <main id="top">
-      <section class="hero section-shell" aria-labelledby="hero-title">
-        <div class="hero__copy">
-          <p class="eyebrow">고시원 계약 전 5분만</p>
-          <h1 id="hero-title">
-            사진만 믿고 계약했다가<br>
-            <span>한 달 내내 후회할 수 있어요</span>
-          </h1>
-          <p class="hero__description">
-            방 사진에는 벌레도, 층간소음도, 한여름의 중앙냉방도 나오지 않아요.
-            직접 살아본 선배가 계약 전에 볼 것만 추렸습니다.
-          </p>
-          <div class="hero__actions">
-            <a class="button button--primary" href="#get-checklist">25개 체크리스트 받기</a>
-            <span class="hero__microcopy">광고 없이 무료로 보내드려요</span>
-          </div>
+      <section class="hero hero--immersive" aria-labelledby="hero-title">
+        <div class="hero__media" aria-hidden="true">
+          <picture class="hero__picture">
+            <source media="(max-width: 600px)" srcset="/assets/room-view-hero-mobile.webp">
+            <img
+              class="hero__media-image"
+              src="/assets/room-view-hero.webp"
+              alt=""
+              width="1920"
+              height="1080"
+              fetchpriority="high"
+            >
+          </picture>
+          <div class="hero__overlay"></div>
         </div>
 
-        <div class="hero-card" aria-label="로드뷰에서 먼저 확인할 내용">
-          <div class="hero-card__toolbar">
-            <span class="hero-card__dot"></span>
-            <span>방문 전에 먼저</span>
-            <span class="hero-card__step">01</span>
-          </div>
-          <div class="roadview" aria-hidden="true">
-            <div class="roadview__sky"></div>
-            <div class="roadview__building">
-              <span class="roadview__window"></span>
-              <span class="roadview__window"></span>
-              <span class="roadview__window"></span>
-              <span class="roadview__window"></span>
-              <span class="roadview__sign">국밥</span>
-              <span class="roadview__door"></span>
+        <div class="hero__inner section-shell">
+          <div class="hero__copy">
+            <p class="eyebrow hero__eyebrow animate-fade-up">고시원 계약 전 5분만</p>
+            <h1 id="hero-title" class="animate-fade-up animate-delay-1">
+              사진만 믿고 계약했다가<br>
+              <span>한 달 내내 후회할 수 있어요</span>
+            </h1>
+            <p class="hero__description animate-fade-up animate-delay-2">
+              벌레·소음·환기처럼 사진에 나오지 않는 것까지<br>
+              직접 살아본 선배가 알려드려요.
+            </p>
+            <div class="hero__actions animate-fade-up animate-delay-3">
+              <a class="button button--hero" href="#get-checklist">25개 체크리스트 받기</a>
+              <span class="hero__microcopy">광고 없이 무료로 보내드려요</span>
             </div>
-            <span class="roadview__pin">!</span>
           </div>
-          <div class="hero-card__message">
-            <strong>로드뷰에서 1층부터 보세요</strong>
-            <p>음식점이나 술집과 가까우면 벌레·냄새·야간 소음 가능성을 먼저 확인해야 해요.</p>
+
+          <div class="hero__inspection" aria-label="방에서 확인할 주요 항목">
+            <span class="inspection-point inspection-point--window">
+              <i aria-hidden="true"></i><b>외창·환기</b>
+            </span>
+            <span class="inspection-point inspection-point--desk">
+              <i aria-hidden="true"></i><b>책상 높이</b>
+            </span>
+            <span class="inspection-point inspection-point--wall">
+              <i aria-hidden="true"></i><b>벽 재질·방음</b>
+            </span>
           </div>
         </div>
       </section>

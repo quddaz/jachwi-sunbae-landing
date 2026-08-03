@@ -16,6 +16,12 @@
   --radius-lg: 28px;
   --radius-md: 18px;
   --max-width: 1120px;
+  --hero-bg: #030305;
+  --hero-text: #ffffff;
+  --hero-muted: #d5d5d5;
+  --hero-accent: #8a63f8;
+  --hero-glass: rgba(20, 20, 25, 0.48);
+  --hero-glass-border: rgba(255, 255, 255, 0.12);
 }
 
 *,
@@ -113,13 +119,77 @@ svg {
   text-decoration: none;
 }
 
-.hero {
+.site-header--overlay {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 20;
+  color: var(--hero-text);
+  transform: translateX(-50%);
+}
+
+.site-header--overlay .brand {
+  color: var(--hero-text);
+}
+
+.site-header--overlay .header-cta {
+  border-color: var(--hero-glass-border);
+  background: var(--hero-glass);
+  color: var(--hero-text);
+  backdrop-filter: blur(14px);
+}
+
+.site-header--overlay .header-cta:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.hero--immersive {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.07fr) minmax(0, 0.93fr);
-  gap: clamp(40px, 7vw, 92px);
+  min-height: max(720px, 100svh);
+  overflow: hidden;
+  background: var(--hero-bg);
+  color: var(--hero-text);
+}
+
+.hero__media,
+.hero__picture,
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.hero__picture {
+  overflow: hidden;
+}
+
+.hero__media-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: room-drift 16s cubic-bezier(0.2, 0.65, 0.3, 1) both;
+}
+
+.hero__overlay {
+  background:
+    linear-gradient(90deg, rgba(3, 3, 5, 0.97) 0%, rgba(3, 3, 5, 0.78) 34%, rgba(3, 3, 5, 0.2) 68%, rgba(3, 3, 5, 0.38) 100%),
+    linear-gradient(0deg, rgba(3, 3, 5, 0.62) 0%, transparent 44%);
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr);
   align-items: center;
-  min-height: 700px;
-  padding-block: 72px 96px;
+  min-height: inherit;
+  padding-block: 132px 82px;
+}
+
+.hero__copy {
+  max-width: 760px;
 }
 
 .eyebrow {
@@ -131,16 +201,18 @@ svg {
   text-transform: uppercase;
 }
 
-.hero h1 {
+.hero--immersive h1 {
   margin: 0;
-  font-size: clamp(2.55rem, 5.7vw, 5.4rem);
+  font-size: clamp(3rem, 6.2vw, 5.8rem);
   font-weight: 900;
-  letter-spacing: -0.07em;
-  line-height: 1.08;
+  letter-spacing: -0.075em;
+  line-height: 1.04;
 }
 
-.hero h1 span {
-  color: var(--orange);
+.hero--immersive h1 span {
+  background: linear-gradient(90deg, #b99fff 0%, #79a6ff 100%);
+  background-clip: text;
+  color: transparent;
 }
 
 .hero__description {
@@ -201,122 +273,141 @@ a:focus-visible {
   font-size: 0.88rem;
 }
 
-.hero-card {
-  overflow: hidden;
-  border: 1px solid rgba(69, 52, 35, 0.12);
-  border-radius: 32px;
-  background: var(--surface-strong);
-  box-shadow: var(--shadow);
-  transform: rotate(1.5deg);
-}
-
-.hero-card__toolbar {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 700;
-}
-
-.hero-card__dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  background: var(--orange);
-}
-
-.hero-card__step {
-  margin-left: auto;
-  font-variant-numeric: tabular-nums;
-}
-
-.roadview {
-  position: relative;
-  height: 280px;
-  overflow: hidden;
-  background: #bfdded;
-}
-
-.roadview__sky {
+.hero--immersive::after {
   position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 25% 28%, rgba(255,255,255,.85) 0 6%, transparent 6.5%),
-    linear-gradient(#b9ddf0 0 62%, #c7c0ab 62% 100%);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  height: 80px;
+  background: linear-gradient(0deg, rgba(30, 27, 23, 0.32), transparent);
+  content: "";
+  pointer-events: none;
 }
 
-.roadview__building {
-  position: absolute;
-  right: 8%;
-  bottom: 14%;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  width: 68%;
-  height: 72%;
-  padding: 24px 20px 16px;
-  background: #e8e0d1;
-  box-shadow: 12px 10px 0 rgba(52, 47, 41, 0.16);
+.hero__eyebrow {
+  color: #bca8ff;
 }
 
-.roadview__window {
-  border: 5px solid #f8f1e8;
-  background: #61818e;
-  box-shadow: inset 0 0 0 1px rgba(20, 36, 41, 0.35);
+.hero--immersive .hero__description {
+  color: var(--hero-muted);
 }
 
-.roadview__sign {
-  display: grid;
-  place-items: center;
-  background: #cf3228;
-  color: #fff6dd;
-  font-weight: 900;
-  letter-spacing: 0.15em;
+.hero--immersive .hero__microcopy {
+  color: rgba(255, 255, 255, 0.68);
 }
 
-.roadview__door {
-  background: #574b3f;
-}
-
-.roadview__pin {
-  position: absolute;
-  left: 16%;
-  bottom: 18%;
-  display: grid;
-  place-items: center;
-  width: 56px;
-  height: 56px;
-  border: 5px solid #fff;
-  border-radius: 999px 999px 999px 6px;
-  background: var(--orange);
-  box-shadow: 0 12px 22px rgba(52, 34, 22, 0.22);
+.button--hero {
+  background: linear-gradient(135deg, #8a63f8 0%, #5c43fa 100%);
+  box-shadow: 0 12px 30px rgba(138, 99, 248, 0.3);
   color: #fff;
-  font-size: 1.35rem;
-  font-weight: 900;
-  transform: rotate(-45deg);
 }
 
-.roadview__pin::first-letter {
-  transform: rotate(45deg);
+.button--hero:hover {
+  background: linear-gradient(135deg, #9c7afa 0%, #6d56fb 100%);
+  box-shadow: 0 16px 34px rgba(138, 99, 248, 0.42);
 }
 
-.hero-card__message {
-  padding: 22px 24px 26px;
+.site-header--overlay a:focus-visible,
+.hero--immersive a:focus-visible {
+  outline-color: rgba(185, 159, 255, 0.8);
 }
 
-.hero-card__message strong {
-  display: block;
-  margin-bottom: 7px;
-  font-size: 1.1rem;
+.hero__inspection {
+  position: relative;
+  align-self: stretch;
 }
 
-.hero-card__message p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.94rem;
+.inspection-point {
+  position: absolute;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  opacity: 0;
+  animation: point-in 0.72s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.inspection-point i {
+  width: 14px;
+  height: 14px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--hero-accent);
+  box-shadow: 0 0 0 7px rgba(138, 99, 248, 0.2);
+}
+
+.inspection-point b {
+  padding: 8px 11px;
+  border: 1px solid var(--hero-glass-border);
+  border-radius: 999px;
+  background: var(--hero-glass);
+  color: #fff;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  backdrop-filter: blur(14px);
+}
+
+.inspection-point--window {
+  top: 20%;
+  right: 7%;
+  animation-delay: 0.72s;
+}
+
+.inspection-point--desk {
+  top: 54%;
+  right: 30%;
+  animation-delay: 0.9s;
+}
+
+.inspection-point--wall {
+  top: 38%;
+  left: 7%;
+  animation-delay: 1.08s;
+}
+
+.animate-fade-up {
+  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-delay-1 {
+  animation-delay: 0.1s;
+}
+
+.animate-delay-2 {
+  animation-delay: 0.2s;
+}
+
+.animate-delay-3 {
+  animation-delay: 0.35s;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+}
+
+@keyframes point-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes room-drift {
+  from {
+    transform: scale(1.035) translate3d(-0.5%, 0, 0);
+  }
+
+  to {
+    transform: scale(1.085) translate3d(0.7%, -0.4%, 0);
+  }
 }
 
 .proof-strip {
@@ -788,15 +879,33 @@ a:focus-visible {
 }
 
 @media (max-width: 820px) {
-  .hero {
+  .hero__inner {
+    position: relative;
     grid-template-columns: minmax(0, 1fr);
-    min-height: auto;
-    padding-block: 52px 84px;
+    align-items: end;
+    padding-block: 132px 76px;
   }
 
-  .hero-card {
-    max-width: 540px;
-    transform: none;
+  .hero__copy {
+    position: relative;
+    z-index: 2;
+    max-width: 680px;
+  }
+
+  .hero__inspection {
+    position: absolute;
+    inset: 78px 0 0;
+  }
+
+  .hero__overlay {
+    background:
+      linear-gradient(90deg, rgba(3, 3, 5, 0.88) 0%, rgba(3, 3, 5, 0.52) 55%, rgba(3, 3, 5, 0.2) 100%),
+      linear-gradient(0deg, rgba(3, 3, 5, 0.9) 0%, rgba(3, 3, 5, 0.22) 64%, rgba(3, 3, 5, 0.18) 100%);
+  }
+
+  .inspection-point--wall {
+    top: 30%;
+    left: 4%;
   }
 
   .benefits {
@@ -832,26 +941,51 @@ a:focus-visible {
     padding-inline: 14px;
   }
 
-  .hero {
-    gap: 40px;
-    padding-top: 38px;
+  .hero--immersive {
+    min-height: max(680px, 100svh);
   }
 
-  .hero h1 br {
-    display: none;
+  .hero__media-image {
+    object-position: 58% center;
+  }
+
+  .hero__overlay {
+    background:
+      linear-gradient(0deg, rgba(3, 3, 5, 0.98) 0%, rgba(3, 3, 5, 0.75) 34%, rgba(3, 3, 5, 0.1) 72%, rgba(3, 3, 5, 0.22) 100%),
+      linear-gradient(90deg, rgba(3, 3, 5, 0.36), transparent 70%);
+  }
+
+  .hero__inner {
+    padding-block: 112px 50px;
   }
 
   .hero__actions {
     align-items: stretch;
     flex-direction: column;
+    max-width: 420px;
+  }
+
+  .button--hero {
+    width: 100%;
   }
 
   .hero__microcopy {
     text-align: center;
   }
 
-  .roadview {
-    height: 235px;
+  .inspection-point--window {
+    top: 19%;
+    right: 4%;
+  }
+
+  .inspection-point--desk {
+    top: 34%;
+    right: auto;
+    left: 4%;
+  }
+
+  .inspection-point--wall {
+    display: none;
   }
 
   .proof-strip {
@@ -915,8 +1049,16 @@ a:focus-visible {
     overflow-wrap: anywhere;
   }
 
-  .hero h1 {
-    font-size: clamp(2.35rem, 12vw, 3.35rem);
+  .hero--immersive h1 {
+    font-size: clamp(2.65rem, 13vw, 3.7rem);
+  }
+
+  .hero--immersive .hero__description {
+    font-size: 0.98rem;
+  }
+
+  .hero--immersive .hero__description br {
+    display: none;
   }
 
   .section-heading h2,
@@ -926,9 +1068,6 @@ a:focus-visible {
     font-size: clamp(1.85rem, 9vw, 2.6rem);
   }
 
-  .roadview__building {
-    width: 74%;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -943,5 +1082,15 @@ a:focus-visible {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .hero__media-image,
+  .animate-fade-up,
+  .inspection-point {
+    animation: none !important;
+  }
+
+  .inspection-point {
+    opacity: 1;
   }
 }

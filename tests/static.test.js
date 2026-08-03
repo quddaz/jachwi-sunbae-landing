@@ -56,6 +56,23 @@ test('스타일은 작은 화면과 모션 감소 설정을 지원한다', async
   assert.match(css, /@media\s*\(max-width:\s*480px\)/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /minmax\(0,\s*1fr\)/);
+  assert.match(css, /\.hero__media-image[\s\S]*animation:\s*room-drift/);
+  assert.match(css, /@keyframes\s+room-drift/);
+  assert.match(css, /\.inspection-point/);
+  assert.match(css, /\.hero__overlay/);
+});
+
+test('상단은 실제 방을 둘러보는 몰입형 히어로를 제공한다', async () => {
+  const html = await readProjectFile('index.html');
+
+  assert.match(html, /class="hero__picture"/);
+  assert.match(html, /srcset="\/assets\/room-view-hero-mobile\.webp"/);
+  assert.match(html, /src="\/assets\/room-view-hero\.webp"/);
+  assert.match(html, /href="#get-checklist"[^>]*>25개 체크리스트 받기/);
+
+  for (const label of ['외창·환기', '책상 높이', '벽 재질·방음']) {
+    assert.match(html, new RegExp(label));
+  }
 });
 
 test('개인정보 안내는 수집 목적과 삭제 방법을 설명한다', async () => {

@@ -13,6 +13,8 @@ const requiredFiles = [
   'api/lib/checklist-email.js',
   'assets/favicon.svg',
   'assets/og-image.svg',
+  'assets/room-view-hero.webp',
+  'assets/room-view-hero-mobile.webp',
 ];
 
 for (const path of requiredFiles) {
