@@ -8,15 +8,15 @@
 
 - 정적 HTML·CSS·JavaScript 랜딩 페이지
 - Vercel Serverless Function 기반 이메일 API
-- Resend HTML·텍스트 체크리스트 이메일
+- Gmail HTML·텍스트 체크리스트 이메일
 - 선택 동의한 연락처의 Resend Segment 등록
 - Node.js 기본 테스트 러너
 
 ## 요구 사항
 
 - Node.js 20 이상
-- Resend 계정과 API Key
-- 이메일 발송에 사용할 검증된 Resend 도메인
+- 2단계 인증을 사용하는 Gmail 계정과 앱 비밀번호
+- 연락처 저장을 사용할 경우 Resend 계정과 API Key
 - Vercel 계정
 
 ## 테스트
@@ -48,20 +48,22 @@ python3 -m http.server 4173
 
 | 이름 | 필수 | 설명 |
 | --- | --- | --- |
-| `RESEND_API_KEY` | 필수 | Resend API Key |
-| `RESEND_FROM_EMAIL` | 필수 | 검증된 도메인의 발신자. 예: `자취선배 <checklist@example.com>` |
-| `RESEND_REPLY_TO_EMAIL` | 필수 | 답장과 개인정보 삭제 요청을 받을 이메일 |
-| `RESEND_SEGMENT_ID` | 선택 | 후속 연락에 동의한 사용자를 저장할 Resend Segment ID |
+| `GMAIL_USER` | 필수 | 체크리스트를 발송하고 답장을 받을 Gmail 주소 |
+| `GMAIL_APP_PASSWORD` | 필수 | Google 2단계 인증에서 발급한 전용 앱 비밀번호 |
+| `RESEND_API_KEY` | 선택 | 후속 연락 동의자를 Resend Contacts에 저장할 API Key |
+| `RESEND_SEGMENT_ID` | 선택 | 후속 연락 동의자를 저장할 Resend Segment ID |
 
 비밀값은 `.env`, `.env.local`, 정적 JavaScript, Git 커밋에 넣지 않습니다.
 
-## Resend 설정
+## Gmail과 Resend 설정
 
-1. Resend에서 발신 도메인을 추가하고 DNS 검증을 완료합니다.
-2. API Key를 만들고 `RESEND_API_KEY`에 설정합니다.
-3. 검증된 주소를 `RESEND_FROM_EMAIL`에 설정합니다.
-4. 실제 답장을 받을 주소를 `RESEND_REPLY_TO_EMAIL`에 설정합니다.
-5. 후속 사용자 연락처를 모으려면 Resend Segment를 만들고 ID를 `RESEND_SEGMENT_ID`에 설정합니다.
+1. Google 계정에서 2단계 인증을 활성화합니다.
+2. 자취선배 전용 앱 비밀번호를 발급해 `GMAIL_APP_PASSWORD`에 설정합니다.
+3. 발신과 답장 수신에 사용할 Gmail 주소를 `GMAIL_USER`에 설정합니다.
+4. 후속 사용자 연락처를 모으려면 Resend API Key를 `RESEND_API_KEY`에 설정합니다.
+5. Resend에서 후속 연락 동의자용 Segment를 만들고 ID를 `RESEND_SEGMENT_ID`에 설정합니다.
+
+Resend 설정은 이메일 발송에는 필요하지 않습니다. `RESEND_API_KEY`와 `RESEND_SEGMENT_ID`가 모두 있을 때만 후속 연락에 선택 동의한 사용자를 Resend Contacts에 저장합니다.
 
 ## Vercel 배포
 
