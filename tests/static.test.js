@@ -87,6 +87,14 @@ test('개인정보 안내는 수집 목적과 삭제 방법을 설명한다', as
   assert.match(html, /철회/);
 });
 
+test('개인정보 안내는 Gmail 발송과 Resend 선택 저장을 구분한다', async () => {
+  const privacy = await readProjectFile('privacy.html');
+
+  assert.match(privacy, /Gmail/);
+  assert.match(privacy, /Resend/);
+  assert.match(privacy, /후속 연락에 선택 동의한 이메일/);
+});
+
 test('Vercel 배포는 보안 헤더와 API 비캐시 정책을 설정한다', async () => {
   const config = JSON.parse(await readProjectFile('vercel.json'));
   const headers = config.headers.flatMap((rule) => rule.headers);
