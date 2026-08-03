@@ -23,9 +23,8 @@ function fakeResponse() {
 }
 
 const configuredEnv = {
-  RESEND_API_KEY: 'test-key',
-  RESEND_FROM_EMAIL: '자취선배 <checklist@example.com>',
-  RESEND_REPLY_TO_EMAIL: 'team@example.com',
+  GMAIL_USER: 'owner@gmail.com',
+  GMAIL_APP_PASSWORD: 'test-app-password',
 };
 
 const validBody = {
@@ -83,7 +82,7 @@ test('메일 환경 변수가 빠지면 외부 호출 없이 실패한다', asyn
     fetchImpl: async () => {
       called = true;
     },
-    env: { RESEND_API_KEY: 'test-key' },
+    env: { GMAIL_USER: 'owner@gmail.com' },
   });
 
   await handler({ method: 'POST', headers: {}, body: validBody }, response);
@@ -93,33 +92,33 @@ test('메일 환경 변수가 빠지면 외부 호출 없이 실패한다', asyn
   assert.equal(called, false);
 });
 
-test('정상 입력은 체크리스트 이메일을 발송한다', async () => {
-  const calls = [];
-  const fetchImpl = async (url, options) => {
-    calls.push({ url, options, body: JSON.parse(options.body) });
-    return {
-      ok: true,
-      status: 200,
-      json: async () => ({ id: 'email_1' }),
-    };
-  };
+test('정상 입력은 Gmail로 체크리스트 이메일을 발송한다', async () => {
+  const messages = [];
   const response = fakeResponse();
-  const handler = createHandler({ fetchImpl, env: configuredEnv });
+  const handler = createHandler({
+    fetchImpl: async () => {
+      throw new Error('Resend must not run');
+    },
+    env: configuredEnv,
+    sendMailImpl: async (message) => {
+      messages.push(message);
+    },
+  });
 
   await handler({ method: 'POST', headers: {}, body: validBody }, response);
 
   assert.equal(response.statusCode, 200);
   assert.deepEqual(response.body, { ok: true });
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0].url, 'https://api.resend.com/emails');
-  assert.deepEqual(calls[0].body.to, ['user@example.com']);
-  assert.equal(calls[0].body.reply_to, 'team@example.com');
-  assert.match(calls[0].options.headers.Authorization, /^Bearer /);
-  assert.match(calls[0].options.headers['User-Agent'], /jachwi-sunbae/);
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0].to, 'user@example.com');
+  assert.match(messages[0].subject, /25개 체크리스트/);
+  assert.match(messages[0].html, /25개/);
+  assert.match(messages[0].text, /^자취선배/m);
 });
 
 test('선택 동의한 사용자는 Resend Segment에 연락처로 등록한 뒤 메일을 받는다', async () => {
   const calls = [];
+  const messages = [];
   const fetchImpl = async (url, options) => {
     calls.push({ url, body: JSON.parse(options.body) });
     return {
@@ -131,7 +130,14 @@ test('선택 동의한 사용자는 Resend Segment에 연락처로 등록한 뒤
   const response = fakeResponse();
   const handler = createHandler({
     fetchImpl,
-    env: { ...configuredEnv, RESEND_SEGMENT_ID: 'segment_1' },
+    env: {
+      ...configuredEnv,
+      RESEND_API_KEY: 'test-key',
+      RESEND_SEGMENT_ID: 'segment_1',
+    },
+    sendMailImpl: async (message) => {
+      messages.push(message);
+    },
   });
 
   await handler({
@@ -141,14 +147,15 @@ test('선택 동의한 사용자는 Resend Segment에 연락처로 등록한 뒤
   }, response);
 
   assert.equal(response.statusCode, 200);
-  assert.equal(calls.length, 2);
+  assert.equal(calls.length, 1);
   assert.equal(calls[0].url, 'https://api.resend.com/contacts');
   assert.deepEqual(calls[0].body, {
     email: 'user@example.com',
     unsubscribed: false,
     segments: [{ id: 'segment_1' }],
   });
-  assert.equal(calls[1].url, 'https://api.resend.com/emails');
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0].to, 'user@example.com');
 });
 
 test('연락처 등록 실패는 체크리스트 발송을 막지 않는다', async () => {
@@ -161,10 +168,18 @@ test('연락처 등록 실패는 체크리스트 발송을 막지 않는다', as
     return { ok: true, status: 200, json: async () => ({ id: 'email_1' }) };
   };
   const response = fakeResponse();
+  const messages = [];
   const handler = createHandler({
     fetchImpl,
-    env: { ...configuredEnv, RESEND_SEGMENT_ID: 'segment_1' },
+    env: {
+      ...configuredEnv,
+      RESEND_API_KEY: 'test-key',
+      RESEND_SEGMENT_ID: 'segment_1',
+    },
     logger: { warn() {} },
+    sendMailImpl: async (message) => {
+      messages.push(message);
+    },
   });
 
   await handler({
@@ -174,21 +189,20 @@ test('연락처 등록 실패는 체크리스트 발송을 막지 않는다', as
   }, response);
 
   assert.equal(response.statusCode, 200);
-  assert.deepEqual(calls, [
-    'https://api.resend.com/contacts',
-    'https://api.resend.com/emails',
-  ]);
+  assert.deepEqual(calls, ['https://api.resend.com/contacts']);
+  assert.equal(messages.length, 1);
 });
 
-test('Resend 이메일 발송 실패는 502로 전달한다', async () => {
+test('Gmail 이메일 발송 실패는 502로 전달한다', async () => {
   const response = fakeResponse();
   const handler = createHandler({
-    fetchImpl: async () => ({
-      ok: false,
-      status: 500,
-      json: async () => ({ message: 'provider failed' }),
-    }),
+    fetchImpl: async () => {
+      throw new Error('Resend must not run');
+    },
     env: configuredEnv,
+    sendMailImpl: async () => {
+      throw new Error('SMTP failed');
+    },
   });
 
   await handler({ method: 'POST', headers: {}, body: validBody }, response);
