@@ -1,4 +1,5 @@
 import { renderChecklistEmail } from './lib/checklist-email.js';
+import { createGmailSender } from './lib/gmail.js';
 import { validateSubmission } from './lib/validation.js';
 
 const RESEND_API_URL = 'https://api.resend.com';
@@ -50,27 +51,11 @@ async function createContact({ fetchImpl, env, email }) {
   });
 }
 
-async function sendEmail({ fetchImpl, env, email }) {
-  const checklistEmail = renderChecklistEmail();
-
-  return fetchImpl(`${RESEND_API_URL}/emails`, {
-    method: 'POST',
-    headers: resendHeaders(env.RESEND_API_KEY),
-    body: JSON.stringify({
-      from: env.RESEND_FROM_EMAIL,
-      to: [email],
-      reply_to: env.RESEND_REPLY_TO_EMAIL,
-      subject: checklistEmail.subject,
-      html: checklistEmail.html,
-      text: checklistEmail.text,
-    }),
-  });
-}
-
 export function createHandler({
   fetchImpl = fetch,
   env = process.env,
   logger = console,
+  sendMailImpl,
 } = {}) {
   return async function sendChecklistHandler(request, response) {
     if (request.method !== 'POST') {
@@ -92,9 +77,8 @@ export function createHandler({
     }
 
     if (
-      !env.RESEND_API_KEY
-      || !env.RESEND_FROM_EMAIL
-      || !env.RESEND_REPLY_TO_EMAIL
+      !env.GMAIL_USER
+      || !env.GMAIL_APP_PASSWORD
     ) {
       return sendJson(response, 500, {
         ok: false,
@@ -104,7 +88,7 @@ export function createHandler({
 
     const { email, followUpConsent } = validation.value;
 
-    if (followUpConsent && env.RESEND_SEGMENT_ID) {
+    if (followUpConsent && env.RESEND_API_KEY && env.RESEND_SEGMENT_ID) {
       try {
         const contactResponse = await createContact({ fetchImpl, env, email });
         if (!contactResponse.ok) {
@@ -115,14 +99,17 @@ export function createHandler({
       }
     }
 
-    let emailResponse;
-    try {
-      emailResponse = await sendEmail({ fetchImpl, env, email });
-    } catch {
-      return sendJson(response, 502, { ok: false, code: 'SEND_FAILED' });
-    }
+    const checklistEmail = renderChecklistEmail();
+    const sendMail = sendMailImpl ?? createGmailSender({ env });
 
-    if (!emailResponse.ok) {
+    try {
+      await sendMail({
+        to: email,
+        subject: checklistEmail.subject,
+        html: checklistEmail.html,
+        text: checklistEmail.text,
+      });
+    } catch {
       return sendJson(response, 502, { ok: false, code: 'SEND_FAILED' });
     }
 
