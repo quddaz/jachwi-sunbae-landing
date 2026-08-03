@@ -6,6 +6,9 @@
   "engines": {
     "node": ">=20"
   },
+  "dependencies": {
+    "nodemailer": "^9.0.3"
+  },
   "scripts": {
     "test": "node --test",
     "check": "node --test && node scripts/check-static.js"
