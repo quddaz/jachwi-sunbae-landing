@@ -314,8 +314,13 @@ a:focus-visible {
 }
 
 .hero__inspection {
-  position: relative;
-  align-self: stretch;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .inspection-point {
@@ -348,21 +353,35 @@ a:focus-visible {
 }
 
 .inspection-point--window {
-  top: 20%;
-  right: 7%;
+  top: 31%;
+  left: 65%;
   animation-delay: 0.72s;
 }
 
 .inspection-point--desk {
-  top: 54%;
-  right: 30%;
+  top: 58%;
+  left: 52%;
   animation-delay: 0.9s;
 }
 
 .inspection-point--wall {
-  top: 38%;
-  left: 7%;
+  top: 42%;
+  left: 82%;
   animation-delay: 1.08s;
+}
+
+@media (min-width: 1600px) {
+  .inspection-point--window {
+    left: 70%;
+  }
+
+  .inspection-point--desk {
+    left: 54%;
+  }
+
+  .inspection-point--wall {
+    left: 86%;
+  }
 }
 
 .animate-fade-up {
@@ -893,19 +912,16 @@ a:focus-visible {
   }
 
   .hero__inspection {
-    position: absolute;
-    inset: 78px 0 0;
+    top: 78px;
+    right: auto;
+    bottom: 0;
+    left: 50%;
   }
 
   .hero__overlay {
     background:
       linear-gradient(90deg, rgba(3, 3, 5, 0.88) 0%, rgba(3, 3, 5, 0.52) 55%, rgba(3, 3, 5, 0.2) 100%),
       linear-gradient(0deg, rgba(3, 3, 5, 0.9) 0%, rgba(3, 3, 5, 0.22) 64%, rgba(3, 3, 5, 0.18) 100%);
-  }
-
-  .inspection-point--wall {
-    top: 30%;
-    left: 4%;
   }
 
   .benefits {
@@ -976,6 +992,7 @@ a:focus-visible {
   .inspection-point--window {
     top: 19%;
     right: 4%;
+    left: auto;
   }
 
   .inspection-point--desk {
